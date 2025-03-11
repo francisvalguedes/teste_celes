@@ -11,6 +11,7 @@ from io import StringIO
 # import datetime
 from datetime import datetime, timezone
 import os
+from glob import glob
 
 def _(text):
     return text
@@ -54,6 +55,10 @@ def main():
     # # elem_df = pd.read_csv(urlCelestrak)
     elem_df = get_celestrack_oe()
     st.dataframe(elem_df)
+
+    arquivos = glob('data/celestrak/*.csv') # Para listar somente .txt altere para "*.txt"
+    for arquivo in arquivos:
+        st.write(arquivo)
 
 
 if __name__== '__main__':
