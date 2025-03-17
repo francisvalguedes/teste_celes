@@ -16,7 +16,7 @@ def download_csv(norad_id):
 
 def check_server_availability():
     try:
-        response = requests.get("https://celestrak.com", timeout=10)
+        response = requests.get("https://celestrak.org", timeout=10)
         return response.status_code == 200
     except requests.exceptions.RequestException:
         return False
