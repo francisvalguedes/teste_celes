@@ -16,8 +16,6 @@ def _segments_from_query(url):
         raise ValueError(
             f"Query '{url}' did not return any results, try a different one"
         )
-    tree = ET.parse(io.StringIO(response.text))
-    root = tree.getroot()
 
     return response.text
 
