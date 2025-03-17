@@ -2,51 +2,41 @@ import requests
 import streamlit as st
 from tenacity import retry, wait_fixed, stop_after_attempt
 
-# Lista de servidores para verificar
-SERVERS = {
-    "Celestrak": "https://celestrak.com/NORAD/elements/gp.php?CATNR=25544&FORMAT=csv",
-    "teste": "https://www.stats.govt.nz/large-datasets/csv-files-for-download/",
-    "Spacetrak": "https://spacetrak.org/data/example.csv",  # Substitua pela URL correta do Spacetrak
-    # Adicione mais servidores aqui
-}
-
 # Função para verificar a disponibilidade de um servidor
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(3))  # Tenta 3 vezes, com 2 segundos de espera entre tentativas
-def check_server_availability(name, url):
+def check_server_availability(url):
     try:
         response = requests.get(url, timeout=10)
         response.raise_for_status()  # Verifica se a resposta é válida (status code 200)
-        return True, f"{name} está online e respondendo."
+        return True, f"O servidor está online e respondendo."
     except requests.exceptions.RequestException as e:
-        return False, f"{name} está offline ou não respondeu. Erro: {e}"
+        return False, f"O servidor está offline ou não respondeu. Erro: {e}"
 
 # Interface do Streamlit
 st.title("Verificador de Disponibilidade de Servidores")
 st.markdown("Este aplicativo verifica a disponibilidade de servidores que fornecem arquivos CSV.")
 
-# Verifica a disponibilidade de cada servidor
-for server_name, server_url in SERVERS.items():
-    st.write(f"Verificando {server_name}...")
-    with st.spinner(f"Conectando a {server_name}..."):
-        status, message = check_server_availability(server_name, server_url)
-        if status:
-            st.success(message)
-        else:
-            st.error(message)
+# Campo de texto para inserir o endereço do servidor
+server_url = st.text_input(
+    "Insira o endereço do servidor (URL):",
+    placeholder="Ex: https://celestrak.com/NORAD/elements/gp.php?CATNR=25544&FORMAT=csv"
+)
+
+# Botão para verificar o servidor
+if st.button("Verificar Servidor"):
+    if server_url:
+        st.write(f"Verificando o servidor em {server_url}...")
+        with st.spinner("Conectando ao servidor..."):
+            status, message = check_server_availability(server_url)
+            if status:
+                st.success(message)
+            else:
+                st.error(message)
+    else:
+        st.warning("Por favor, insira um endereço de servidor válido.")
 
 st.markdown("---")
 st.markdown("Feito com ❤️ usando [Streamlit](https://streamlit.io/).")
-
-
-
-
-
-
-
-
-
-
-
 
 
 
