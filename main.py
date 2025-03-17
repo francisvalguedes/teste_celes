@@ -2,15 +2,25 @@ import requests
 import streamlit as st
 from tenacity import retry, wait_fixed, stop_after_attempt
 
-# Função para verificar a disponibilidade de um servidor
-@retry(wait=wait_fixed(2), stop=stop_after_attempt(3))  # Tenta 3 vezes, com 2 segundos de espera entre tentativas
-def check_server_availability(url):
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()  # Verifica se a resposta é válida (status code 200)
-        return True, f"O servidor está online e respondendo."
-    except requests.exceptions.RequestException as e:
-        return False, f"O servidor está offline ou não respondeu. Erro: {e}"
+import io
+import json
+import xml.etree.ElementTree as ET
+
+import httpx
+
+def _segments_from_query(url):
+    response = httpx.get(url)
+    response.raise_for_status()
+
+    if response.text == "No GP data found":
+        raise ValueError(
+            f"Query '{url}' did not return any results, try a different one"
+        )
+    tree = ET.parse(io.StringIO(response.text))
+    root = tree.getroot()
+
+    return response.text
+
 
 # Interface do Streamlit
 st.title("Verificador de Disponibilidade de Servidores")
@@ -27,11 +37,8 @@ if st.button("Verificar Servidor"):
     if server_url:
         st.write(f"Verificando o servidor em {server_url}...")
         with st.spinner("Conectando ao servidor..."):
-            status, message = check_server_availability(server_url)
-            if status:
-                st.success(message)
-            else:
-                st.error(message)
+            message = _segments_from_query(server_url)
+            st.write(message)
     else:
         st.warning("Por favor, insira um endereço de servidor válido.")
 
@@ -39,7 +46,7 @@ st.markdown("---")
 st.markdown("Feito com ❤️ usando [Streamlit](https://streamlit.io/).")
 
 
-
+# https://celestrak.com/NORAD/elements/gp.php?CATNR=25544&FORMAT=csv
 
 # import requests
 # import streamlit as st
