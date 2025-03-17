@@ -39,7 +39,7 @@ def get_celestrack_oe():
 
 
 def load_original_data(url):
-    response = requests.get(url)
+    response = requests.get(url, timeout= 10)
     if response.status_code == 200:
         return pd.read_csv(StringIO(response.text))
     else:
@@ -56,7 +56,7 @@ def main():
     elem_df = get_celestrack_oe()
     st.dataframe(elem_df)
 
-    arquivos = glob('data/celestrak/*.csv') # Para listar somente .txt altere para "*.txt"
+    arquivos = glob('data/celestrak/*.csv') 
     for arquivo in arquivos:
         st.write(arquivo)
 
