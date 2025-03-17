@@ -48,12 +48,13 @@ def load_original_data(url):
     
 def main():
     # norad_id = norad_id = st.number_input('Unique NORAD_CAT_ID', 0, 999999,value= 25544, format="%d")        
-    # urlCelestrak = 'https://celestrak.org/NORAD/elements/gp.php?CATNR='+ str(norad_id) +'&FORMAT=csv'
+    norad_id = 25544
+    urlCelestrak = 'https://celestrak.org/NORAD/elements/gp.php?CATNR='+ str(norad_id) +'&FORMAT=csv'
 
     # st.write('spacetrak')
     # elem_df = load_original_data(urlCelestrak)
-    # # elem_df = pd.read_csv(urlCelestrak)
-    elem_df = get_celestrack_oe()
+    elem_df = pd.read_csv(urlCelestrak)
+    # elem_df = get_celestrack_oe()
     st.dataframe(elem_df)
 
     arquivos = glob('data/celestrak/*.csv') 
