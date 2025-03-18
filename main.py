@@ -1,23 +1,5 @@
-import requests
+
 import streamlit as st
-from tenacity import retry, wait_fixed, stop_after_attempt
-
-import io
-import json
-import xml.etree.ElementTree as ET
-
-import httpx
-
-def _segments_from_query(url):
-    response = httpx.get(url)
-    response.raise_for_status()
-
-    if response.text == "No GP data found":
-        raise ValueError(
-            f"Query '{url}' did not return any results, try a different one"
-        )
-
-    return response.text
 
 
 # Interface do Streamlit
@@ -35,8 +17,7 @@ if st.button("Verificar Servidor"):
     if server_url:
         st.write(f"Verificando o servidor em {server_url}...")
         with st.spinner("Conectando ao servidor..."):
-            message = _segments_from_query(server_url)
-            st.write(message)
+            st.write(server_url)
     else:
         st.warning("Por favor, insira um endereço de servidor válido.")
 
